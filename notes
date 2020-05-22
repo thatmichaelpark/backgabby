@@ -1,0 +1,18 @@
+To do:
+- rules enforcement: gotta use full dice value if possible
+- Game Over logic
+- direction of play arrows on preferences screen
+- better connection management
+
+✓ choose checker color
+✓ choose board orientation
+✓ end game button
+✓ z-ordering
+✓ undo
+✓ handle large piles
+✓ rules enforcement: disable bearing off
+
+
+When bearing off from position 1 <= n <= 6:
+if n matches a die, ok
+if n

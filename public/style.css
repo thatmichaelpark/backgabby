@@ -1,0 +1,238 @@
+body {
+    margin: 0;
+}
+svg {
+    height: 100%;
+    width: 86.5%;
+}
+.gabby {
+  margin: 1em;
+  text-align: center;
+}
+#board {
+  height: 72vmin;
+  width: 100vmin;
+  margin: 0 auto;
+  position: relative;
+}
+
+.hoverable:hover {
+  stroke-width: 0.03;
+  stroke: rgba(100, 100, 255, 0.5);
+}
+#control-container {
+    position: absolute;
+    right: 0;
+    top: 0;
+    left: 86.5%;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;;
+}
+#control-container button {
+  margin-top: 1em;
+  width: 100%;
+}
+
+@media (max-aspect-ratio: 3/2) {
+    #chat {
+        top: 80vmin;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        overflow: hidden;
+    }
+    #messages {
+        bottom: 30px;
+        position: absolute;
+        overflow: auto;
+    }
+    #input {
+        left: 0;
+        right: 0;
+        height: 30px;
+        bottom: 0;
+        position: absolute;
+    }
+}
+
+@media (min-aspect-ratio: 3/2) {
+    #board {
+        position: absolute;
+        top: 10vmin;
+        }
+    #chat {
+        position: absolute;
+        left: 100vmin;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+    #messages {
+        bottom: 30px;
+        position: absolute;
+        overflow: auto;
+    }
+    #input {
+        left: 0;
+        right: 0;
+        height: 30px;
+        bottom: 0;
+        position: absolute;
+    }
+}
+
+#messages {
+    left: 0;
+    right: 0;
+}
+
+.sender {
+  color: blue;
+}
+
+.message {
+}
+
+button, input, p {
+  font-size: large;
+}
+
+p {
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
+}
+
+.toast {
+  position: absolute;
+  right: 2em;
+  width: 15em;
+  padding: 1em;
+  transition: top 0.5s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: toast-in 0.5s;
+}
+
+.toast button {
+  background-color: transparent;
+  border: 0;
+}
+.dead {
+  animation: toast-out 0.5s;
+/*   opacity: 0;
+  transition: all 0.25s; */
+}
+
+.toast-type-good {
+  background-color: lightgreen;
+}
+
+.toast-type-bad {
+  background-color: pink;
+}
+
+.toast-type-neutral {
+  background-color: aliceblue;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+#newgamebutton-container {
+  border: 2px solid yellow;
+  margin-top: 1em;
+  text-align: center;
+  width: 100%;
+}
+
+#newgamebutton-container button {
+  font-size: smaller;
+  width: 100%;
+  margin: 0;
+}
+
+.armed {
+  background-color: red;
+}
+
+.preferences {
+  background-color: white;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.preferences h2 {
+  text-align: center;
+}
+.orientation img {
+  border: 10px solid transparent;
+  margin: 6px;
+  padding: 3px;
+}
+
+.orientation img.selected {
+  border-color: green;
+}
+.orientation .row {
+  text-align: center;
+}
+
+.color-row {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+.circle {
+  border: 5px solid lightgray;
+  border-radius: 5em;
+  width: 5em;
+  height: 5em;
+  margin: 2em;
+}
+
+.circle.selected {
+  border-color: green;
+  border-width: 10px;
+}
+
+.white {
+  background-color: white;
+}
+
+.black {
+  background-color: black;
+}
+
+.blinking-bg {
+  animation: blinkingBkgd 1s infinite;
+}
+@keyframes blinkingBkgd {
+  0% {color: #f0f0f0}
+  50% {color: #f0fff0}
+  100% {color: green}
+}
