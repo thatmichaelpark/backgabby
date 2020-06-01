@@ -1,19 +1,26 @@
 import {pileX, pileY} from './components/Board';
 
 export function appReducer(prevState, { type, payload }) {
+  console.log('appReducer', type, payload);;;
   const socket = prevState.socketRef.current;
   switch (type) {
     case "set socket":
+      console.log('setting socket', payload);;;
       prevState.socketRef.current = payload;
       return { ...prevState, isLoggedIn: false, isInviting: false, isInvited: false, isPlaying: false, user: null };
     case "disconnected":
-      console.log('disconnected');;;
-      prevState.socketRef.current = payload;
-      return { ...prevState, isLoggedIn: false, isInviting: false, isInvited: false, isPlaying: false, user: null };
+      console.log('disconnected', payload);;;
+      prevState.socketRef.current = null;
+      if (prevState.user) {
+        prevState.user.socketId = null;
+      }
+      return {...prevState};
+      // return { ...prevState, isLoggedIn: false, isInviting: false, isInvited: false, isPlaying: false, user: null };
     case "log in":
       socket.emit("log in", payload);
       return prevState;
     case "login succeeded":
+      console.log('login succeeded');;;
       return { ...prevState, isLoggedIn: true, isInviting: false, isInvited: false, isPlaying: false, user: payload };
     case "login failed":
       console.log("login failed");
@@ -24,22 +31,22 @@ export function appReducer(prevState, { type, payload }) {
     case "logout succeeded":
       return { ...prevState, isLoggedIn: false, isInviting: false, isInvited: false, isPlaying: false, user: null };
     case "users":
-      if (prevState.isLoggedIn) {
-        // Verify that user is still logged in:
-        if (!payload.find(p => p.id === prevState.user.id)) {
-          console.log('I got logged out!');;;
-          return { ...prevState, users: payload };
-          return {...prevState, isLoggedIn: false, isInviting: false, isInvited: false, isPlaying: false, users: payload}
-        }
-      }
-      if (prevState.isInviting || prevState.isInvited || prevState.isPlaying) {
-        // Verify that both parties are still connected:
-        if (!payload.find(p => p.id === prevState.inviter.id) || !payload.find(p => p.id === prevState.invitee.id)) {
-          console.log('Someone got logged out!');;;
-          return { ...prevState, users: payload };
-          return {...prevState, isInviting: false, isInvited: false, isPlaying: false, users: payload}
-        }
-      }
+      // if (prevState.isLoggedIn) {
+      //   // Verify that user is still logged in:
+      //   if (!payload.find(p => p.userId === prevState.user.userId)) {
+      //     console.log('I got logged out!');;;
+      //     // return { ...prevState, users: payload };
+      //     return {...prevState, isLoggedIn: false, isInviting: false, isInvited: false, isPlaying: false, users: payload}
+      //   }
+      // }
+      // if (prevState.isInviting || prevState.isInvited || prevState.isPlaying) {
+      //   // Verify that both parties are still connected:
+      //   if (!payload.find(p => p.id === prevState.inviter.id) || !payload.find(p => p.id === prevState.invitee.id)) {
+      //     console.log('Someone got logged out!');;;
+      //     // return { ...prevState, users: payload };
+      //     return {...prevState, isInviting: false, isInvited: false, isPlaying: false, users: payload}
+      //   }
+      // }
       return { ...prevState, users: payload };
     case "invite":
       socket.emit('invite', {inviter: prevState.user, invitee: payload})

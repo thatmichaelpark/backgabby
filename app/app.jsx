@@ -70,25 +70,26 @@ function App() {
       dispatch({type:'game ended'});
     });
     socket.on('connect', (e) => {
-      console.log('connect', e);
+      console.log('connect', socket.id, context.appState.app);
+      if (context.appState.app.user) {
+        console.log('Here I should try relogging in', context.appState.app.user);;;
+      }
     });
     // socket.on('connect_error', (e) => {
     //   console.log('connect_error', e);
     // });
     // socket.on('connect_timeout', (e) => {
     //   console.log('connect_timeout', e);
-    // });    socket.on('xxx', (e) => {
-    //   console.log('xxx', e);
     // });
     // socket.on('error', (e) => {
     //   console.log('error', e);
     // });
     socket.on('disconnect', (e) => {
-      // dispatch({type: 'disconnected'});
+      dispatch({type: 'disconnected'});
       console.log('disconnect', e);
     });
     // socket.on('reconnect', (e) => {
-    //   console.log('xxx', e);
+    //   console.log('reconnect', e);
     // });
     // socket.on('reconnect_attempt', (e) => {
     //   console.log('reconnect_attempt', e);
