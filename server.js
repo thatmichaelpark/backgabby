@@ -1,3 +1,4 @@
+
 const express = require("express");
 const app = express();
 const http = require("http").createServer(app);
@@ -35,26 +36,51 @@ function findUserByUsername(username) {
   return users.find(u => u.username === username);
 }
 
-function findUserById(id) {
-  return users.find(u => u.id === id);
+function findUserByUserId(userId) {
+  return users.find(u => u.userId === userId);
+}
+
+function findUserBySocketId(socketId) {
+  return users.find(u => u.socketId === socketId);
+}
+
+function printUsers() {
+  users.forEach(user => {
+    console.log(`${user.username}\t${user.userId || '---\t\t'}\t${user.socketId}`);
+  });
+  console.log('=============================');
 }
 
 io.on("connection", function(socket) {
   socketDict[socket.id] = true;
-  console.log(`new socket: ${socket.id}; ${Object.keys(socketDict).length}`);
-  console.log(socketDict);
-  console.log(`a user connected; ${users.length} users: ${users.map(u => u.username || '???')}.`);
+  users.push({
+    username: '',
+    userId: null,
+    id: socket.id,
+    socketId: socket.id
+  });
+  console.log(`new socket: ${socket.id}`);
+  printUsers();;;
 
   socket.on("log in", ({ username, password }) => {
+    const user = findUserByUsername(username);
+    if (user) {
+      user.username = '';
+      user.userId = null;
+      console.log(`${username} logged out in anticipation of relogging in`);
+    }
+    
     if (
       knownUsers.find(
         user => user.username === username && user.password === password
-      ) &&
-      !findUserByUsername(username)
+      )
     ) {
-      users.push({username, id: socket.id});
-      console.log(`${username} logged in; ${users.length} users: ${users.map(u => u.username || '???')}.`);
-      socket.emit("login succeeded", { username, id: socket.id });
+      const user = findUserBySocketId(socket.id);
+      user.username = username;
+      user.userId = user.socketId;
+      console.log(`${username} logged in`);
+      printUsers();
+      socket.emit("login succeeded", user);
       emitUsers();
     } else {
       socket.emit("login failed");
@@ -62,7 +88,7 @@ io.on("connection", function(socket) {
   });
   
   function emitUsers() {
-    io.emit('users', users);
+    io.emit('users', users.filter(user => user.username));
   }
 
   socket.on('invite', ({inviter, invitee}) => {
@@ -83,7 +109,7 @@ io.on("connection", function(socket) {
   });
 
   socket.on('game event', ({event, inviter, invitee}) => {
-    console.log('game event', event, inviter, invitee);
+    // console.log('game event', event, inviter, invitee);
     socket.to(inviter.id).emit('game event', event);
     socket.to(invitee.id).emit('game event', event);
   });
@@ -96,23 +122,33 @@ io.on("connection", function(socket) {
   
   socket.on("log out", () => {
     socket.emit('logout succeeded');
-    const username = removeUser(socket.id);
-    console.log(`${username} logged out; ${users.length} remaining: ${users.map(u => u.username || '???')}.`);
+    console.log(`${findUserBySocketId(socket.id)} logged out`);
+    removeUser(socket.id);
+    printUsers();
   });
 
   socket.on("disconnect", function() {
-    const username = removeUser(socket.id);
+    const i = users.findIndex(u => u.socketId === socket.id);
+    if (i >= 0) {
+      if (users[i].userId) {
+        users[i].socketId = null;
+      } else {
+        // Remove empty user slot:
+        users.splice(i, 1);
+      }
+    }
+    
     delete socketDict[socket.id];
     emitUsers();
     console.log(`${socket.id} disconnected; ${Object.keys(socketDict).length}`);
+    printUsers();
   });
 
-  function removeUser(id) {
-    const user = findUserById(socket.id);
-    const username = user ? user.username : '???';
-    users = users.filter(u => u.id !== socket.id);
+  function removeUser(socketId) {
+    const user = findUserBySocketId(socketId);
+    user.username = '';
+    user.userId = null;
     emitUsers();
-    return username;    
   }
 });
 

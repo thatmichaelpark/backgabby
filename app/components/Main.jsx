@@ -23,10 +23,19 @@ export default function Main() {
   }
 
   const sortedUsers = app.users
-    .filter(user => user.id !== app.socketRef.current.id)
+    .filter(user => user.socketId && app.socketRef.current && user.socketId !== app.socketRef.current.id)
     .sort((a, b) =>
       a.username < b.username ? -1 : a.username > b.username ? 1 : 0
   );
+  
+  if (app.user && !app.user.socketId) {
+    return (
+      <>
+        <h1>DISCONNECTED!</h1>
+        <h1>Please wait</h1>
+      </>
+    );
+  }
   
   return (
     <>
@@ -47,7 +56,7 @@ export default function Main() {
             {sortedUsers.length ? (
               sortedUsers.map(user => (
                 <li
-                  key={user.id}
+                  key={user.userId}
                 >
                   <button onClick={() => dispatch({ type: "invite", payload: user })}>Invite {user.username} to play</button>
                 </li>
